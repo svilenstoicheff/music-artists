@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -35,4 +35,54 @@
   to {
     transform: rotate(360deg);
   }
+} */
+
+button {
+  background: none;
+    border: none;
+    text-decoration: underline;
+    color: darkblue;
+    cursor: pointer;
+}
+
+ul {
+  list-style-type: none;
+}
+
+ul li {
+  display: flex;
+}
+li button {
+  flex-basis: 200px;
+  text-align: left;
+}
+
+.contentContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.contentContainer form {
+  grid-column-end: 3;
+  grid-column-start: 1;
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+}
+
+#search-box {
+  padding: .5em;
+  font-size: 120%;
+}
+
+form input[type="submit"] {
+  font-size: 120%;
+    padding: .5em;
+    margin-left: 1em;
+}
+
+.error {
+  border: 2px solid red;
 }
