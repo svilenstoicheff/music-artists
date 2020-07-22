@@ -15,8 +15,14 @@ class GetArtists extends React.Component {
     }
     searchInput.classList.remove('error');
 
+    const trackListContainer = document.querySelector('#infoContainer .trackList') as HTMLDivElement;
+    let tracksSlot = trackListContainer.querySelector('ol') as HTMLOListElement;
+    const fullBioContainer = document.querySelector('#infoContainer .fullBio') as HTMLDivElement;
+    const bioSlot = fullBioContainer.querySelector('p') as HTMLParagraphElement;
+    const expandButton = fullBioContainer.querySelector('button') as HTMLButtonElement;
+
     const apiKey = '64b32c8086f30f682d47312e370904bd';
-    const url = 'http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=' + searchInput.value + '&api_key=' + apiKey + '&format=json';
+    const url = `http://ws.audioscrobbler.com/2.0/?method=artist.search&limit=20&artist=${searchInput.value}&api_key=${apiKey}&format=json`;
 
     await fetch(url, options)
       .then(response => response.json())
@@ -26,49 +32,69 @@ class GetArtists extends React.Component {
       });
 
     function displayArtists(artist: Array<any>) {
-      console.log(artist);
-      artist.map(artist => {
-        if ('content' in document.createElement('template')) {
-          let listTemplate = document.querySelector('#artistList li') as HTMLLIElement;
-          let clone = listTemplate.cloneNode(true) as HTMLTemplateElement;
-          //clone.setAttribute('data-name', artist.name);
-          let bioLink = clone.querySelector('.bioLink') as HTMLButtonElement;
-          let tracksLink = clone.querySelector('.tracksLink') as HTMLButtonElement;
-          bioLink.textContent = artist.name;
-          bioLink.setAttribute('data-name', artist.name)
-          tracksLink.setAttribute('data-name', artist.name);
+      const container = document.querySelector('#artistListContainer') as HTMLUListElement;
+      if (artist.length !== 0) {
+        container.innerHTML = '';
 
-          bioLink.addEventListener('click', getArtistInfo);
-          tracksLink.addEventListener('click', getArtistTopTracks);
-          let container = document.querySelector('#artistListContainer') as HTMLUListElement;
+        artist.forEach(artist => {
+          if ('content' in document.createElement('template')) {
 
-          container.appendChild(clone);
-        } else {
-          console.log('Templates not supported');
-          //<template> not supported, use a traditional solution - concatenated strings, Mustache, etc. 
-        }
-      });
+            let listTemplate = document.querySelector('#artistList li') as HTMLLIElement;
+            let clone = listTemplate.cloneNode(true) as HTMLTemplateElement;
+            let bioLink = clone.querySelector('.bioLink') as HTMLButtonElement;
+            let tracksLink = clone.querySelector('.tracksLink') as HTMLButtonElement;
+            bioLink.textContent = artist.name;
+            bioLink.setAttribute('data-name', artist.name)
+            tracksLink.setAttribute('data-name', artist.name);
+            bioLink.addEventListener('click', getArtistInfo);
+            tracksLink.addEventListener('click', getArtistTopTracks);
+            container.appendChild(clone);
+
+          } else {
+            console.log('Templates not supported');
+            //<template> not supported, use a traditional solution - concatenated strings, Mustache, etc. 
+          }
+        });
+        
+      } else {
+        container.innerHTML = 'No artists available for your search'
+      }
     }
 
 
     async function getArtistInfo(event: Event) {
-      let element = event.target as HTMLElement;
-      let artistName = element.getAttribute('data-name');
-      const url = `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artistName}&api_key=${apiKey}&format=json`;
+      const element = event.target as HTMLElement;
+      const artistName = element.getAttribute('data-name');
+      const url = `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artistName}&api_key=${apiKey}&limit=20&format=json`;
+
+      const summaryContainer = document.querySelector('#infoContainer .summary') as HTMLDivElement;
+      const summarySlot = summaryContainer.querySelector('p') as HTMLParagraphElement;
+      const nameContainer = document.querySelector('h2.artistName') as HTMLHeadingElement;
+      const allTrackLinks = document.querySelectorAll('.tracksLink') as NodeListOf<HTMLButtonElement>;
+      const trackList = document.querySelector('.trackList') as HTMLDivElement;
+      trackList.classList.add('hidden');
+      allTrackLinks.forEach(link => link.classList.add('hidden'));
+      document.querySelector('.highlight')?.classList.remove('highlight');
+      element.classList.add('highlight');
+      element.parentElement?.querySelector('.tracksLink')?.classList.remove('hidden');
 
       await fetch(url, options)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
+          //console.log(data);
+          summaryContainer.classList.remove('hidden');
+          fullBioContainer.classList.remove('hidden');
+          nameContainer.innerText = data.artist?.name;
 
-          let summaryContainer = document.querySelector('#infoContainer .summary') as HTMLDivElement;
-          let fullBioContainer = document.querySelector('#infoContainer .fullBio') as HTMLDivElement;
-          summaryContainer.innerHTML = `<p>${data.artist.bio.summary}</p>`;
-          fullBioContainer.innerHTML = `<p>${data.artist.bio.content}</p>`;
-        
+          let artistSummary = data.artist?.bio?.summary;
+          let artistBio = data.artist?.bio?.content;
+
+          summarySlot.innerHTML = artistSummary ? artistSummary : '<p class="error">No summary available</p>';
+          bioSlot.innerHTML = artistBio ? artistBio : '<p class="error">No bio available</p>';
+          artistBio ? fullBioContainer.classList.remove('hidden') : fullBioContainer.classList.add('hidden');
         });
     }
-
+    
     async function getArtistTopTracks(event: Event) {
       let element = event.target as HTMLElement;
       let artistName = element.getAttribute('data-name');
@@ -78,18 +104,43 @@ class GetArtists extends React.Component {
       await fetch(url, options)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
-          let tracksContainer = document.querySelector('#infoContainer .trackList ol') as HTMLOListElement;
-          data.toptracks.track.forEach(function(track: { name: any; }, idx: number) {
-            if(idx < 20) {
-              let listItem = `<li>${track.name}</li>`;
-              tracksCollection += listItem;
+          trackListContainer.classList.remove('hidden');
+          bioSlot.classList.add('hidden');console.log('123');
+          expandButton.innerText = 'Click to expand';
+            if (data.toptracks) {
+              data.toptracks?.track.forEach(function(track: { name: any; url: any;}, idx: number) {
+                if(idx < 20) {
+                  let listItem = `<li>${track.name} <a href="${track.url}" target="_blank" class="play"> >> </a></li>`;
+                  tracksCollection += listItem;
+                }                
+              });
+              tracksSlot.classList.remove('error');
+              tracksSlot.innerHTML = tracksCollection;
+
+            } else {
+              tracksSlot.innerHTML = '<li class="error">No tracks found</li>';
             }
-            
-          });
-          tracksContainer.innerHTML = tracksCollection;
+        })
+        .catch((error) => {
+          tracksSlot.innerHTML = '<li class="error">No tracks found</li>';
+          console.log(error);
         });
     }
+
+    expandButton.removeEventListener('click', handleButtonClick, true);
+
+    function handleButtonClick (e: Event) {
+      let target = e.target as HTMLButtonElement;
+      if(bioSlot.classList.contains('hidden')) {
+        bioSlot.classList.remove('hidden');
+        target.innerText = 'Click to collapse';
+      } else {
+        bioSlot.classList.add('hidden'); console.log('92');
+        target.innerText = 'Click to expand';
+      }
+    }
+
+    expandButton.addEventListener('click', handleButtonClick, true);
   }
 
   render() {
@@ -99,17 +150,29 @@ class GetArtists extends React.Component {
         <input type="submit" value="Search"/>
       </form>
       <ul id="artistListContainer"></ul>
+
       <section id="infoContainer">
-        <div className="summary">summary</div>
-        <div className="fullBio">full bio</div>
-        <div className="trackList">tracks
+        <h2 className="artistName"> </h2>
+        <div className="summary hidden">
+          <h3>Summary</h3>
+          <p></p>
+        </div>
+        <div className="fullBio hidden">
+          <h3>Full bio <button>click to expand</button></h3>
+          
+          <p className="hidden"></p>
+        </div>
+
+
+        <div className="trackList hidden">
+          <h3>Artist top tracks</h3>
           <ol></ol>
         </div>
       </section>
       <template id="artistList">
         <li>
           <button className="bioLink" data-name="">See bio</button>
-          <button className="tracksLink" data-name="">See top tracks</button>
+          <button className="tracksLink hidden" data-name="">See top tracks</button>
         </li>
       </template>
     </article>);
