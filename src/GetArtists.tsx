@@ -9,7 +9,7 @@ class GetArtists extends React.Component {
       headers: { "X-Auth-Token": "64b32c8086f30f682d47312e370904bd" },
     };
     const searchInput = document.querySelector('#search-box') as HTMLInputElement;
-    if(!searchInput.value.trim()) {
+    if (!searchInput.value.trim()) {
       searchInput.classList.add('error');
       return;
     }
@@ -55,7 +55,7 @@ class GetArtists extends React.Component {
             //<template> not supported, use a traditional solution - concatenated strings, Mustache, etc. 
           }
         });
-        
+
       } else {
         container.innerHTML = 'No artists available for your search'
       }
@@ -92,7 +92,7 @@ class GetArtists extends React.Component {
           artistBio ? fullBioContainer.classList.remove('hidden') : fullBioContainer.classList.add('hidden');
         });
     }
-    
+
     async function getArtistTopTracks(event: Event) {
       let element = event.target as HTMLElement;
       let artistName = element.getAttribute('data-name');
@@ -105,19 +105,19 @@ class GetArtists extends React.Component {
           trackListContainer.classList.remove('hidden');
           bioSlot.classList.add('hidden');
           expandButton.innerText = 'Click to expand';
-            if (data.toptracks) {
-              data.toptracks?.track.forEach(function(track: { name: any; url: any;}, idx: number) {
-                if(idx < 20) {
-                  let listItem = `<li>${track.name} <a href="${track.url}" target="_blank" class="play"> >> </a></li>`;
-                  tracksCollection += listItem;
-                }                
-              });
-              tracksSlot.classList.remove('error');
-              tracksSlot.innerHTML = tracksCollection;
+          if (data.toptracks) {
+            data.toptracks?.track.forEach(function (track: { name: any; url: any; }, idx: number) {
+              if (idx < 20) {
+                let listItem = `<li>${track.name} <a href="${track.url}" target="_blank" class="play"> >> </a></li>`;
+                tracksCollection += listItem;
+              }
+            });
+            tracksSlot.classList.remove('error');
+            tracksSlot.innerHTML = tracksCollection;
 
-            } else {
-              tracksSlot.innerHTML = '<li class="error">No tracks found</li>';
-            }
+          } else {
+            tracksSlot.innerHTML = '<li class="error">No tracks found</li>';
+          }
         })
         .catch((error) => {
           tracksSlot.innerHTML = '<li class="error">No tracks found</li>';
@@ -127,9 +127,9 @@ class GetArtists extends React.Component {
 
     expandButton.removeEventListener('click', handleButtonClick, true);
 
-    function handleButtonClick (e: Event) {
+    function handleButtonClick(e: Event) {
       let target = e.target as HTMLButtonElement;
-      if(bioSlot.classList.contains('hidden')) {
+      if (bioSlot.classList.contains('hidden')) {
         bioSlot.classList.remove('hidden');
         target.innerText = 'Click to collapse';
       } else {
@@ -145,7 +145,7 @@ class GetArtists extends React.Component {
     return (<article className="contentContainer">
       <form onSubmit={this.searchArtists}>
         <input type="text" id="search-box" placeholder="type an artist's name" defaultValue=""></input>
-        <input type="submit" value="Search"/>
+        <input type="submit" value="Search" />
       </form>
       <ul id="artistListContainer"></ul>
 
@@ -157,10 +157,9 @@ class GetArtists extends React.Component {
         </div>
         <div className="fullBio hidden">
           <h3>Full bio <button>click to expand</button></h3>
-          
+
           <p className="hidden"></p>
         </div>
-
 
         <div className="trackList hidden">
           <h3>Top tracks</h3>
