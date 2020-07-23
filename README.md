@@ -1,16 +1,23 @@
 # Project Description
 This app performs an artist search on Last.fm and displays up to 20 relevant matches to your search terms. 
+
 Selecting an artist in the left column performs a details search and displays a summary and a full bio, which can be toggled in and out of view. 
+
 The "See top tracks" link triggers yet another search and displays up to 20 most popular tracks by the selected artist. 
 
 # Implementation Notes
 The app is built with Typescript and React. React is used sparingly, just for the main component, GetArtists.
+
 For the artists list, I used elements of the Web Components standard - HTML templates and JavaScript template literals. The content and top tracks components are built with just HTML, CSS and JavaScript. 
+
 The styling is pretty basic and it just accounts for layout and readability. 
 
 # Improvement Suggestions
+
 The subcomponents can be abstracted as separate React components, if React is a requirement. 
+
 The API returns more data than displayed, so content can be added, such as images, number of listeners, etc. 
+
 The styling leaves a lot to be desired and can be improved, for the purposes of esthetic presentation and content organization. 
 
 # Technical Notes
@@ -42,18 +49,3 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
