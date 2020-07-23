@@ -88,3 +88,6 @@ a.play, a.play:visited {
   color: green;
   text-decoration: none;
 }
+.summary p a, .fullBio p a {
+  display: block;
+}

@@ -61,7 +61,6 @@ class GetArtists extends React.Component {
       }
     }
 
-
     async function getArtistInfo(event: Event) {
       const element = event.target as HTMLElement;
       const artistName = element.getAttribute('data-name');
@@ -81,7 +80,6 @@ class GetArtists extends React.Component {
       await fetch(url, options)
         .then(response => response.json())
         .then(data => {
-          //console.log(data);
           summaryContainer.classList.remove('hidden');
           fullBioContainer.classList.remove('hidden');
           nameContainer.innerText = data.artist?.name;
@@ -105,7 +103,7 @@ class GetArtists extends React.Component {
         .then(response => response.json())
         .then(data => {
           trackListContainer.classList.remove('hidden');
-          bioSlot.classList.add('hidden');console.log('123');
+          bioSlot.classList.add('hidden');
           expandButton.innerText = 'Click to expand';
             if (data.toptracks) {
               data.toptracks?.track.forEach(function(track: { name: any; url: any;}, idx: number) {
@@ -135,7 +133,7 @@ class GetArtists extends React.Component {
         bioSlot.classList.remove('hidden');
         target.innerText = 'Click to collapse';
       } else {
-        bioSlot.classList.add('hidden'); console.log('92');
+        bioSlot.classList.add('hidden');
         target.innerText = 'Click to expand';
       }
     }
@@ -165,7 +163,7 @@ class GetArtists extends React.Component {
 
 
         <div className="trackList hidden">
-          <h3>Artist top tracks</h3>
+          <h3>Top tracks</h3>
           <ol></ol>
         </div>
       </section>
